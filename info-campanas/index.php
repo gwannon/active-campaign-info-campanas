@@ -13,7 +13,7 @@
   <script src="./assets/js/app.js"></script>
   <style>
     body {
-    	font-family: 'Ubuntu', cursive;
+      font-family: 'Ubuntu', cursive;
     }
   </style>
 </head>
