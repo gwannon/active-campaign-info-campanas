@@ -4,7 +4,6 @@ include_once("config.php");
 $result = getAllCampaigns($_REQUEST['limit'], $_REQUEST['offset']);
 $items = array();
 foreach ($result as $campaign) { 
-  //print_r ($campaign);
   if(in_array($campaign->segmentname, $allowed_segments)) $message = getMessage($campaign->links->campaignMessage);
   else unset($message);
   
