@@ -9,9 +9,9 @@ function getAllCampaigns($max_items, $offset = 0) {
   return $result->campaigns;
 }
 
-function getMessage($link) {
+function getMessage($campaign) {
   $curl = curl_init();
-  curl_setopt($curl, CURLOPT_URL, $link);
+  curl_setopt($curl, CURLOPT_URL, $campaign->links->campaignMessage);
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
   curl_setopt($curl, CURLOPT_HTTPHEADER, array('Api-Token: '.AC_API_TOKEN));
   $result = json_decode(curl_exec($curl));
