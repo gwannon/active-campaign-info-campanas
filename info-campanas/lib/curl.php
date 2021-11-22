@@ -12,7 +12,7 @@ function getAllCampaigns($max_items, $offset = 0) {
     $items[] = [
       "id" => $campaign->id,
       "name" => $campaign->name,
-      "subject" => utf8_encode($message),
+      "subject" => $message,
       "send_amt" => $campaign->send_amt,
       "uniqueopens" => $campaign->uniqueopens,
       "uniqueopens_percent" => ($campaign->uniqueopens > 0 && $campaign->send_amt > 0 ? round(($campaign->uniqueopens / $campaign->send_amt * 100), 2) : 0)."%",
@@ -29,8 +29,7 @@ function getAllCampaigns($max_items, $offset = 0) {
 function searchCampaigns($search) {
   global $mysqli;
   $items = array();
-  //echo "SELECT campaign_id, title, image FROM `messages` WHERE (`title` LIKE '%".$_REQUEST['search']."%' OR `text` LIKE '%".$_REQUEST['search']."%') ORDER BY campaign_id DESC"; die;
-  $res = $mysqli->query("SELECT campaign_id, title, image FROM `messages` WHERE (`title` LIKE '%".$_REQUEST['search']."%' OR `text` LIKE '%".$_REQUEST['search']."%') ORDER BY campaign_id DESC");
+  $res = $mysqli->query("SELECT campaign_id, title, image FROM `messages` WHERE (`title` LIKE '%{$_REQUEST['search']}%' OR `text` LIKE '%{$_REQUEST['search']}%') ORDER BY campaign_id DESC");
   if($res->num_rows > 0) {
     while ($row = $res->fetch_assoc()) {
       $curl = curl_init();
@@ -41,7 +40,7 @@ function searchCampaigns($search) {
       $items[] = [
         "id" => $result->campaign->id,
         "name" => $result->campaign->name,
-        "subject" => utf8_encode($row['title']),
+        "subject" => $row['title'],
         "send_amt" => $result->campaign->send_amt,
         "uniqueopens" => $result->campaign->uniqueopens,
         "uniqueopens_percent" => ($result->campaign->uniqueopens > 0 && $result->campaign->send_amt > 0 ? round(($result->campaign->uniqueopens / $result->campaign->send_amt * 100), 2) : 0)."%",
@@ -57,14 +56,9 @@ function searchCampaigns($search) {
 }
 
 function getMessage($campaign) {
-	global $mysqli;
-  //echo "SELECT title FROM messages WHERE campaign_id = ".$campaign->id."<br/>";
-	$result = $mysqli->query("SELECT title FROM messages WHERE campaign_id = ".$campaign->id);
-  //echo $result->num_rows;
-	if($result->num_rows == 0) {
-    //Guardamos en base de datos
-    
-
+  global $mysqli;
+  $result = $mysqli->query("SELECT title FROM messages WHERE campaign_id = ".$campaign->id);
+  if($result->num_rows == 0) {
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $campaign->links->campaignMessage);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -79,12 +73,11 @@ function getMessage($campaign) {
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curl, CURLOPT_HTTPHEADER, array('Api-Token: '.AC_API_TOKEN));
     $html = json_decode(curl_exec($curl));
-    $res = $mysqli->query("INSERT INTO `messages` (`id`, `campaign_id`, `title`, `text`, `image`, `date`) VALUES ('', '".$campaign->id."', '".utf8_decode($message->campaignMessage->subject)."', '".addslashes($html->message->html)."', '".$message->campaignMessage->screenshot."', CURRENT_TIMESTAMP)");
-    
+    //Guardamos en base de datos
+    $res = $mysqli->query("INSERT INTO `messages` (`id`, `campaign_id`, `title`, `text`, `image`, `date`) VALUES ('', '".$campaign->id."', '".$message->campaignMessage->subject."', '".addslashes($html->message->html)."', '".$message->campaignMessage->screenshot."', CURRENT_TIMESTAMP)");
     return $message->campaignMessage->subject;
   } else {
     $row = $result->fetch_row();
-    //print_r($row[0]);
     return $row[0];
   }
 }
@@ -94,7 +87,6 @@ function getImagePreview($campaign) {
   $result = $mysqli->query("SELECT image FROM messages WHERE campaign_id = ".$campaign->id);
   if($result->num_rows > 0) {
     $row = $result->fetch_row();
-    //print_r($row[0]);
     return $row[0];
   } else {
     return "";

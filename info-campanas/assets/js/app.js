@@ -26,7 +26,7 @@ jQuery(document).ready(function() {
                 jQuery("table tbody").append("<tr><td><a href='/info-campanas/view.php?id="+data.id+"' target='_blank'>"+data.name+"</a><div class='image'><img src='"+data.image+"' /></div></td><td>"+data.subject+"</td><td>"+data.send_amt+"</td><td>"+data.uniqueopens+"</td><td>"+data.uniqueopens_percent+"</td><td>"+data.opens+"</td><td>"+data.uniquelinkclicks+"</td><td>"+data.linkclicks+"</td><td>"+data.unsubscribes+"</td></tr>")
             });
             offset = offset + limit;
-            console.log("offset: "+offset);
+            /*console.log("offset: "+offset);*/
         },
         error : function(xhr, status) {
             alert('Disculpe, existió un problema');
