@@ -1,22 +1,10 @@
 <?php
 
+header('Content-type: application/json; charset=utf-8');
+
 include_once("config.php");
-$result = getAllCampaigns($_REQUEST['limit'], $_REQUEST['offset']);
-$items = array();
-foreach ($result as $campaign) { 
-  if(in_array($campaign->segmentname, $allowed_segments)) $message = getMessage($campaign);
-  else unset($message);
-  
-  $items[] = [
-    "name" => $campaign->name,
-    "subject" => isset($message) ? $message->subject : "",
-    "send_amt" => $campaign->send_amt,
-    "uniqueopens" => $campaign->uniqueopens,
-    "opens" => $campaign->opens,
-    "uniquelinkclicks" => $campaign->uniquelinkclicks,
-    "linkclicks" => $campaign->linkclicks,
-    "unsubscribes" => $campaign->unsubscribes
-  ];
-} 
+
+if(isset($_REQUEST['search']) && $_REQUEST['search'] != '') $items = searchCampaigns($_REQUEST['search']);
+else $items = getAllCampaigns($_REQUEST['limit'], $_REQUEST['offset']);
 
 echo json_encode($items);

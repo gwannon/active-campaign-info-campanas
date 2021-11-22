@@ -1,10 +1,12 @@
 <?php 
 
+ini_set("display_errors", "1");
+
+$mysqli = new mysqli("localhost", "db_user", "dbpassword", "db_name");
+
 define('AC_API_DOMAIN', 'https://xxxxxxxxxxxxxxxxxxx.com'); //URL de la API de Active Campaign
 define('AC_API_TOKEN', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'); //Token de la API de Active Campaign
-define('AC_API_LIMIT', 20);
-
-$allowed_segments = array ("2NewsletterADI-castellano", "2Newsletter-ADI-euskera", "2Newsletter-SPRI-castellano", "2Newsletter-SPRI-euskera", "Newsletter-UPEUSKADI");
+define('AC_API_LIMIT', 30);
 
 include_once("./lib/curl.php");
 

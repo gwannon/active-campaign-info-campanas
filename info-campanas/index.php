@@ -15,6 +15,29 @@
     body {
       font-family: 'Ubuntu', cursive;
     }
+    td {
+      position: relative;
+    }
+
+    td > div.image {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 40%;
+      height: 300px;
+      overflow: hidden;
+      z-index: 10;
+      border: 1px solid #000;
+      min-width: 250px;
+    }
+
+    td:hover > div.image {
+      display: block;
+    }
+
+    td > div.image img {
+      width: 100%;
+    }
   </style>
 </head>
 <body>
@@ -25,10 +48,14 @@
           <table class="table table-striped">
             <thead class="table-dark">
               <tr>
+                <th colspan="9" class="text-end"><input type="text" name="search" value="" /><button id="search">Buscar</button></th>
+              </tr>
+              <tr>
                 <th scope="col">Nombre</th>
                 <th scope="col">Título</th>
                 <th scope="col">Enviados</th>
                 <th scope="col">Aperturas únicas</th>
+                <th scope="col">Porcentaje de aperturas únicas</th>
                 <th scope="col">Aperturas</th>
                 <th scope="col">Clicks únicos</th>
                 <th scope="col">Clicks totales</th>
