@@ -1,27 +1,11 @@
 <?php
 
-function getAllCampaigns($max_items, $offset = 0) {
+function getAllCampaigns($offset = 0) {
   $items = array();
-  $curl = curl_init();
-  curl_setopt($curl, CURLOPT_URL, AC_API_DOMAIN."/api/3/campaigns?orders[sdate]=DESC&offset=".$offset."&limit=".$max_items);
-  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-  curl_setopt($curl, CURLOPT_HTTPHEADER, array('Api-Token: '.AC_API_TOKEN));
-  $result = json_decode(curl_exec($curl));
+  $result = curlCall(AC_API_DOMAIN."/api/3/campaigns?orders[sdate]=DESC&offset=".$offset."&limit=".AC_API_LIMIT);
   foreach ($result->campaigns as $campaign) { 
-    $message = getMessage($campaign);
-    $items[] = [
-      "id" => $campaign->id,
-      "name" => $campaign->name,
-      "subject" => $message,
-      "send_amt" => $campaign->send_amt,
-      "uniqueopens" => $campaign->uniqueopens,
-      "uniqueopens_percent" => ($campaign->uniqueopens > 0 && $campaign->send_amt > 0 ? round(($campaign->uniqueopens / $campaign->send_amt * 100), 2) : 0)."%",
-      "opens" => $campaign->opens,
-      "uniquelinkclicks" => $campaign->uniquelinkclicks,
-      "linkclicks" => $campaign->linkclicks,
-      "unsubscribes" => $campaign->unsubscribes,
-      "image" =>  getImagePreview($campaign)
-    ];
+    $info = getCampaignCachedInfo($campaign);
+    $items[] = generateCampaignArray($campaign, $info['title'], $info['image']);
   } 
   return $items;
 }
@@ -32,64 +16,50 @@ function searchCampaigns($search) {
   $res = $mysqli->query("SELECT campaign_id, title, image FROM `messages` WHERE (`title` LIKE '%{$_REQUEST['search']}%' OR `text` LIKE '%{$_REQUEST['search']}%') ORDER BY campaign_id DESC");
   if($res->num_rows > 0) {
     while ($row = $res->fetch_assoc()) {
-      $curl = curl_init();
-      curl_setopt($curl, CURLOPT_URL, AC_API_DOMAIN."/api/3/campaigns/".$row['campaign_id']);
-      curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-      curl_setopt($curl, CURLOPT_HTTPHEADER, array('Api-Token: '.AC_API_TOKEN));
-      $result = json_decode(curl_exec($curl));
-      $items[] = [
-        "id" => $result->campaign->id,
-        "name" => $result->campaign->name,
-        "subject" => $row['title'],
-        "send_amt" => $result->campaign->send_amt,
-        "uniqueopens" => $result->campaign->uniqueopens,
-        "uniqueopens_percent" => ($result->campaign->uniqueopens > 0 && $result->campaign->send_amt > 0 ? round(($result->campaign->uniqueopens / $result->campaign->send_amt * 100), 2) : 0)."%",
-        "opens" => $result->campaign->opens,
-        "uniquelinkclicks" => $result->campaign->uniquelinkclicks,
-        "linkclicks" => $result->campaign->linkclicks,
-        "unsubscribes" => $result->campaign->unsubscribes,
-        "image" => $row['image']
-      ];
+      $campaign = curlCall(AC_API_DOMAIN."/api/3/campaigns/".$row['campaign_id'])->campaign;
+      $items[] = generateCampaignArray($campaign, $row['title'], $row['image']);
     }
   }
   return $items;
 }
 
-function getMessage($campaign) {
+function getCampaignCachedInfo($campaign) {
   global $mysqli;
-  $result = $mysqli->query("SELECT title FROM messages WHERE campaign_id = ".$campaign->id);
+  $result = $mysqli->query("SELECT title, image, text FROM messages WHERE campaign_id = ".(is_numeric($campaign) ? $campaign : $campaign->id));
   if($result->num_rows == 0) {
-    $curl = curl_init();
-    curl_setopt($curl, CURLOPT_URL, $campaign->links->campaignMessage);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array('Api-Token: '.AC_API_TOKEN));
-    $message = json_decode(curl_exec($curl));
-    //print_r ($message);
-    curl_close($curl);
-
-    
-    $curl = curl_init();
-    curl_setopt($curl, CURLOPT_URL, $message->campaignMessage->links->message);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array('Api-Token: '.AC_API_TOKEN));
-    $html = json_decode(curl_exec($curl));
+    $message = curlCall($campaign->links->campaignMessage); //Conseguimos el título de la campaña
+    $html = curlCall($message->campaignMessage->links->message); //Conseguimos el texto de la campaña
     //Guardamos en base de datos
     $res = $mysqli->query("INSERT INTO `messages` (`id`, `campaign_id`, `title`, `text`, `image`, `date`) VALUES ('', '".$campaign->id."', '".$message->campaignMessage->subject."', '".addslashes($html->message->html)."', '".$message->campaignMessage->screenshot."', CURRENT_TIMESTAMP)");
-    return $message->campaignMessage->subject;
+    return array("title" => $message->campaignMessage->subject, "image" => $message->campaignMessage->screenshot, "text" => $html->message->html);
   } else {
-    $row = $result->fetch_row();
-    return $row[0];
+    $row = $result->fetch_assoc();
+    return array("title" => $row['title'], "image" => $row['image'], "text" => $row['text']);
   }
 }
 
-function getImagePreview($campaign) {
-	global $mysqli;
-  $result = $mysqli->query("SELECT image FROM messages WHERE campaign_id = ".$campaign->id);
-  if($result->num_rows > 0) {
-    $row = $result->fetch_row();
-    return $row[0];
-  } else {
-    return "";
-  }
+function generateCampaignArray($campaign, $title, $image) {
+  return [
+    "id" => $campaign->id,
+    "name" => $campaign->name,
+    "subject" => $title,
+    "send_amt" => $campaign->send_amt,
+    "uniqueopens" => $campaign->uniqueopens,
+    "uniqueopens_percent" => ($campaign->uniqueopens > 0 && $campaign->send_amt > 0 ? round(($campaign->uniqueopens / $campaign->send_amt * 100), 2) : 0)."%",
+    "opens" => $campaign->opens,
+    "uniquelinkclicks" => $campaign->uniquelinkclicks,
+    "linkclicks" => $campaign->linkclicks,
+    "unsubscribes" => $campaign->unsubscribes,
+    "image" => $image
+  ];
+}
 
+function curlCall($link) {
+  $curl = curl_init();
+  curl_setopt($curl, CURLOPT_URL, $link);
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($curl, CURLOPT_HTTPHEADER, array('Api-Token: '.AC_API_TOKEN));
+  $json = json_decode(curl_exec($curl));
+  curl_close($curl);
+  return $json;
 }

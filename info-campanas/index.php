@@ -7,7 +7,6 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script>
-    var offset = 0;
     var limit = <?php echo AC_API_LIMIT; ?>;
   </script>
   <script src="./assets/js/app.js"></script>
@@ -48,7 +47,7 @@
           <table class="table table-striped">
             <thead class="table-dark">
               <tr>
-                <th colspan="9" class="text-end"><input type="text" name="search" value="" /><button id="search">Buscar</button></th>
+                <th colspan="9" class="text-end"><form id="search"><input type="text" name="search" value="" /><button>Buscar</button></form></th>
               </tr>
               <tr>
                 <th scope="col">Nombre</th>
@@ -67,7 +66,7 @@
         </div>
         <div class="col-12 p-3">
           <div id="loading" style="display: none;">Cargando ...</div>
-          <a href="#" id="loadmore" class="btn btn-primary" style="display: none;">Cargar más</a>
+          <button id="loadmore" class="btn btn-primary" style="display: none;">Cargar más</button>
         </div>      
       </div>
     </div>
