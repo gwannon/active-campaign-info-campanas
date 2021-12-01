@@ -47,16 +47,24 @@
           <table class="table table-striped">
             <thead class="table-dark">
               <tr>
-                <th colspan="9" class="text-end"><form id="search"><input type="text" name="search" value="" /><button>Buscar</button></form></th>
+                <th colspan="11">
+                  <form id="search" class="row m-0">
+                    <div class="col-auto"><input class="form-control" type="text" name="search" value="" /></div>
+                    <div class="col-auto"><button class="btn btn-secondary">Buscar</button></div>
+                    <div class="col-auto"><a href="./csv.php" class="btn btn-secondary">Exportar a CSV</a></div>
+                  </form>
+                </th>
               </tr>
               <tr>
                 <th scope="col">Nombre</th>
+                <th scope="col">Fecha</th>
                 <th scope="col">Título</th>
                 <th scope="col">Enviados</th>
                 <th scope="col">Aperturas únicas</th>
                 <th scope="col">Porcentaje de aperturas únicas</th>
                 <th scope="col">Aperturas</th>
                 <th scope="col">Clicks únicos</th>
+                <th scope="col">Porcentaje de clicks únicos</th>
                 <th scope="col">Clicks totales</th>
                 <th scope="col">Bajas</th>
               </tr>

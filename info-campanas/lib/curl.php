@@ -2,11 +2,12 @@
 
 function getAllCampaigns($offset = 0) {
   $items = array();
-  $result = curlCall(AC_API_DOMAIN."/api/3/campaigns?orders[sdate]=DESC&offset=".$offset."&limit=".AC_API_LIMIT);
-  foreach ($result->campaigns as $campaign) { 
+  $campaigns = curlCall(AC_API_DOMAIN."/api/3/campaigns?orders[sdate]=DESC&offset=".$offset."&limit=".AC_API_LIMIT)->campaigns;
+  foreach ($campaigns as $campaign) { 
     $info = getCampaignCachedInfo($campaign);
     $items[] = generateCampaignArray($campaign, $info['title'], $info['image']);
-  } 
+  }
+  if (count($items) == 0) return false;
   return $items;
 }
 
@@ -41,13 +42,15 @@ function getCampaignCachedInfo($campaign) {
 function generateCampaignArray($campaign, $title, $image) {
   return [
     "id" => $campaign->id,
+    "date" => date("Y-m-d", strtotime($campaign->sdate)),
     "name" => $campaign->name,
     "subject" => $title,
     "send_amt" => $campaign->send_amt,
     "uniqueopens" => $campaign->uniqueopens,
-    "uniqueopens_percent" => ($campaign->uniqueopens > 0 && $campaign->send_amt > 0 ? round(($campaign->uniqueopens / $campaign->send_amt * 100), 2) : 0)."%",
+    "uniqueopens_percent" => ($campaign->uniqueopens > 0 && $campaign->send_amt > 0 ? round(($campaign->uniqueopens / $campaign->send_amt * 100), 2) : 0),
     "opens" => $campaign->opens,
     "uniquelinkclicks" => $campaign->uniquelinkclicks,
+    "uniquelinkclicks_percent" => ($campaign->uniquelinkclicks > 0 && $campaign->send_amt > 0 ? round(($campaign->uniquelinkclicks / $campaign->send_amt * 100), 2) : 0),
     "linkclicks" => $campaign->linkclicks,
     "unsubscribes" => $campaign->unsubscribes,
     "image" => $image

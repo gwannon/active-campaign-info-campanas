@@ -17,13 +17,15 @@ jQuery(document).ready(function() {
 function generateTable(json) {
   json.forEach(function(data, index) {
     jQuery("table tbody").append("<tr>"+
-      "<td><a href='/info-campanas/view.php?id="+data.id+"' target='_blank'>"+data.name+"</a><div class='image'><img src='"+data.image+"' /></div></td>"+
+      "<td><a href='./view.php?id="+data.id+"' target='_blank'>"+data.name+"</a><div class='image'><img src='"+data.image+"' /></div></td>"+
+      "<td>"+data.date+"</td>"+
       "<td>"+data.subject+"</td>"+
       "<td>"+data.send_amt+"</td>"+
       "<td>"+data.uniqueopens+"</td>"+
-      "<td>"+data.uniqueopens_percent+"</td>"+
+      "<td>"+data.uniqueopens_percent+"%</td>"+
       "<td>"+data.opens+"</td>"+
       "<td>"+data.uniquelinkclicks+"</td>"+
+      "<td>"+data.uniquelinkclicks_percent+"%</td>"+
       "<td>"+data.linkclicks+"</td>"+
       "<td>"+data.unsubscribes+"</td>"+
     "</tr>")
