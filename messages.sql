@@ -10,8 +10,8 @@ CREATE TABLE `messages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `campaign_id` int(11) NOT NULL,
   `title` text NOT NULL,
-  `text` text NOT NULL,
-  `image` text NOT NULL,
+  `text` longtext NOT NULL,
+  `image` longtext NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
