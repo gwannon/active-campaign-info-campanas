@@ -1,8 +1,8 @@
 <?php
 header("Content-Type: text/csv");
 header("Content-Disposition: attachment; filename=active_campaign-".date("Y-m-d").".csv");
-include_once("config.php");
-$csv = [["Fecha","Nombre","Título","Enviados","Aperturas únicas","Porcentaje de aperturas únicas","Aperturas","Clicks únicos","Porcentaje de clicks únicos","Clicks totales","Bajas"]];
+include_once("./lib/config.php");
+$csv = [["Fecha","Nombre","Título","Enviados","Aperturas únicas","Porcentaje de aperturas únicas","Aperturas","Clicks únicos","Porcentaje de clicks únicos","Clicks totales","Bajas","Segmento"]];
 $offset = 0;
 while($items = getAllCampaigns($offset)) {
   foreach ($items as $item) {

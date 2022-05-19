@@ -31,7 +31,7 @@ function getCampaignCachedInfo($campaign) {
     $message = curlCall($campaign->links->campaignMessage); //Conseguimos el título de la campaña
     $html = curlCall($message->campaignMessage->links->message); //Conseguimos el texto de la campaña
     //Guardamos en base de datos
-    $res = $mysqli->query("INSERT INTO `messages` (`id`, `campaign_id`, `title`, `text`, `image`, `date`) VALUES ('', '".$campaign->id."', '".$message->campaignMessage->subject."', '".addslashes($html->message->html)."', '".$message->campaignMessage->screenshot."', CURRENT_TIMESTAMP)");
+    $res = $mysqli->query("INSERT INTO `messages` (`campaign_id`, `title`, `text`, `image`, `date`) VALUES ('".$campaign->id."', '".$message->campaignMessage->subject."', '".addslashes($html->message->html)."', '".$message->campaignMessage->screenshot."', CURRENT_TIMESTAMP)");
     return array("title" => $message->campaignMessage->subject, "image" => $message->campaignMessage->screenshot, "text" => $html->message->html);
   } else {
     $row = $result->fetch_assoc();
@@ -42,18 +42,19 @@ function getCampaignCachedInfo($campaign) {
 function generateCampaignArray($campaign, $title, $image) {
   return [
     "id" => $campaign->id,
-    "date" => date("Y-m-d", strtotime($campaign->sdate)),
+    "date" => date("Y-m-d H:i", strtotime($campaign->sdate)),
     "name" => $campaign->name,
     "subject" => $title,
     "send_amt" => $campaign->send_amt,
     "uniqueopens" => $campaign->uniqueopens,
-    "uniqueopens_percent" => ($campaign->uniqueopens > 0 && $campaign->send_amt > 0 ? round(($campaign->uniqueopens / $campaign->send_amt * 100), 2) : 0),
+    "uniqueopens_percent" => number_format(($campaign->uniqueopens > 0 && $campaign->send_amt > 0 ? round(($campaign->uniqueopens / $campaign->send_amt * 100), 2) : 0), 2, ",", "."),
     "opens" => $campaign->opens,
     "uniquelinkclicks" => $campaign->uniquelinkclicks,
-    "uniquelinkclicks_percent" => ($campaign->uniquelinkclicks > 0 && $campaign->send_amt > 0 ? round(($campaign->uniquelinkclicks / $campaign->send_amt * 100), 2) : 0),
+    "uniquelinkclicks_percent" => number_format(($campaign->uniquelinkclicks > 0 && $campaign->send_amt > 0 ? round(($campaign->uniquelinkclicks / $campaign->send_amt * 100), 2) : 0), 2, ",", "."),
     "linkclicks" => $campaign->linkclicks,
     "unsubscribes" => $campaign->unsubscribes,
-    "image" => $image
+    "image" => $image,
+    "segment_name" => $campaign->segmentname
   ];
 }
 
@@ -74,4 +75,24 @@ function arrayToCsv($data, $delimiter = ',', $enclosure = '"', $escape_char = "\
   }
   rewind($f);
   return stream_get_contents($f);
+}
+
+
+function getCampaignById($id) {
+  $items = array();
+  $campaign = curlCall(AC_API_DOMAIN."/api/3/campaigns/{$id}")->campaign;
+  $items['uniquelinkclicks'] = $campaign->uniquelinkclicks;
+  $items['linkclicks'] = $campaign->linkclicks;
+  $links = curlCall(AC_API_DOMAIN."/api/3/campaigns/{$id}/links")->links;
+  foreach ($links as $link) { 
+    if (filter_var($link->link, FILTER_VALIDATE_URL)) {
+      $items['links'][] = [
+        "link" => $link->link,
+        "uniquelinkclicks" => $link->uniquelinkclicks,
+        "linkclicks" => $link->linkclicks, 
+      ];
+    }
+  }
+  if (count($items['links']) == 0) return false;
+  return $items;
 }

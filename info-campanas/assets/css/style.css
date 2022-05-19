@@ -1,0 +1,23 @@
+td {
+  position: relative;
+}
+
+td > div.image {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 40%;
+  height: 300px;
+  overflow: hidden;
+  z-index: 10;
+  border: 1px solid #000;
+  min-width: 250px;
+}
+
+td:hover > div.image {
+  display: block;
+}
+
+td > div.image img {
+  width: 100%;
+}
