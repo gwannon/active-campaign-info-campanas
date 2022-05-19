@@ -10,5 +10,3 @@ define('AC_API_TOKEN', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'); //Token de la API de A
 define('AC_API_LIMIT', 30);
 
 include_once("./lib/curl.php");
-
-?>
