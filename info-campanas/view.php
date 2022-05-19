@@ -36,7 +36,7 @@ function loadHeatMap() {
         var linkclicks = json.linkclicks;
         var countlinks = json.links.length;
 
-        var step = Math.floor(uniquelinkclicks / countlinks);
+        var step = Math.ceil(uniquelinkclicks / countlinks);
         jQuery('#blue,#green,#orange,#red,#stats').html('--');
         jQuery('#stats').html(uniquelinkclicks+'/'+linkclicks);
         jQuery('#blue').html('>= '+(step * 3));
