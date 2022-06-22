@@ -89,7 +89,9 @@ function getCampaignById($id) {
       $items['links'][] = [
         "link" => $link->link,
         "uniquelinkclicks" => $link->uniquelinkclicks,
+        "uniquelinkclickspercent" => round((($link->uniquelinkclicks / $campaign->uniquelinkclicks) * 100), 2),
         "linkclicks" => $link->linkclicks, 
+        "linkclickspercent" => round((($link->linkclicks / $campaign->linkclicks) * 100), 2),
       ];
     }
   }
