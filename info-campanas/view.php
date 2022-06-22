@@ -3,6 +3,9 @@
 include_once("./lib/config.php");
 
 if(!is_numeric($_REQUEST['id'])) die;
+
+if(isset($_REQUEST['recache']) && $_REQUEST['recache'] == 'yes') deleteCampaignCachedInfo($_REQUEST['id']);
+
 $campaign = getCampaignCachedInfo($_REQUEST['id']);
 
 $extra = "<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'></script>

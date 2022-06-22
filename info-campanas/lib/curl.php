@@ -39,6 +39,11 @@ function getCampaignCachedInfo($campaign) {
   }
 }
 
+function deleteCampaignCachedInfo($campaign) {
+  global $mysqli;
+  return $mysqli->query("DELETE FROM messages WHERE campaign_id = ".(is_numeric($campaign) ? $campaign : $campaign->id));
+}
+
 function generateCampaignArray($campaign, $title, $image) {
   return [
     "id" => $campaign->id,
