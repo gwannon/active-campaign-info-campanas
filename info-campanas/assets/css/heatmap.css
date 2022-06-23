@@ -1,0 +1,31 @@
+#control {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    text-align: center;
+    font-weight: 700;
+}
+#blue,
+#green,
+#orange,
+#red,
+#black {
+    color: white;
+    padding: 10px;
+    background-color: black;
+}
+#blue { background-color: blue; }
+#green { background-color: green; }
+#orange { background-color: orange; }
+#red { background-color: red; }
+
+.heatmap {
+    text-shadow: 0 0 3px #000;
+    position: absolute;
+    color: white;
+    font-size: 20px;
+    z-index: 10;
+    min-width: 30px;
+    min-height: 20px;
+    font-weight: 700;
+}
