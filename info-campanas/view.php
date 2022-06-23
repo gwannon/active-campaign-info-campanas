@@ -27,7 +27,7 @@ $extra = "<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquer
       },
       type : 'GET',
       dataType : 'json',
-      beforeSend: function () { },
+      beforeSend: function () { jQuery('a img').css('opacity', '1'); },
       success : function(json) {
         var uniquelinkclicks = json.uniquelinkclicks;
         var linkclicks = json.linkclicks;
@@ -66,7 +66,7 @@ $extra = "<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquer
         }
       },
       error : function(xhr, status) { },
-      complete : function(xhr, status) { }
+      complete : function(xhr, status) { jQuery('a img').css('opacity', '0.45'); }
     });
   }
 
