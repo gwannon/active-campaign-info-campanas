@@ -1,6 +1,6 @@
 # active-campaign-info-campanas
-Panel sencillo para ver las estadísticas principales de las campañas de Active Campaign así como mapa de calor de los clicks de los boletines.
+Simple dashboard to see the main statistics of the ActiveCampaign campaigns as well as heatmap of the newsletter clicks.
 
-Copia config.php.dist como config.php y edítalo con tus datos de conexión a la API de ActiveCampaign y los de conexión a la base de datos. Usa messages.sql para crear la tabla donde guardar el html de las campañas.
+Copy config.php.dist as config.php and edit it with your ActiveCampaign API connection and database connection details. Use messages.sql to create the table where to store the html of the campaigns.
 
-Saludos y disfruta :)
+Greetings and enjoy :)
