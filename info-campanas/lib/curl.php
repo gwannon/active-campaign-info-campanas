@@ -84,19 +84,29 @@ function arrayToCsv($data, $delimiter = ',', $enclosure = '"', $escape_char = "\
 
 
 function getCampaignById($id) {
+  global $exclude_urls;
   $items = array();
   $campaign = curlCall(AC_API_DOMAIN."/api/3/campaigns/{$id}")->campaign;
   $items['uniquelinkclicks'] = $campaign->uniquelinkclicks;
   $items['linkclicks'] = $campaign->linkclicks;
   $links = curlCall(AC_API_DOMAIN."/api/3/campaigns/{$id}/links")->links;
+
+  //Quitamos del número de clicks los excluidos
   foreach ($links as $link) { 
-    if (filter_var($link->link, FILTER_VALIDATE_URL)) {
+    if (filter_var($link->link, FILTER_VALIDATE_URL) && in_array($link->link, $exclude_urls)) {
+      $items['uniquelinkclicks'] = $items['uniquelinkclicks'] - $link->uniquelinkclicks;
+      $items['linkclicks'] = $items['linkclicks'] - $link->linkclicks;
+    }
+  }
+  
+  foreach ($links as $link) { 
+    if (filter_var($link->link, FILTER_VALIDATE_URL) && !in_array($link->link, $exclude_urls)) {
       $items['links'][] = [
         "link" => $link->link,
         "uniquelinkclicks" => $link->uniquelinkclicks,
-        "uniquelinkclickspercent" => round((($link->uniquelinkclicks / $campaign->uniquelinkclicks) * 100), 2),
+        "uniquelinkclickspercent" => round((($link->uniquelinkclicks / $items['uniquelinkclicks']) * 100), 2),
         "linkclicks" => $link->linkclicks, 
-        "linkclickspercent" => round((($link->linkclicks / $campaign->linkclicks) * 100), 2),
+        "linkclickspercent" => round((($link->linkclicks / $items['linkclicks']) * 100), 2),
       ];
     }
   }
