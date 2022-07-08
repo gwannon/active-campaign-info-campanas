@@ -2,7 +2,7 @@ jQuery(document).ready(function () {
     jQuery('a').css('display', 'inline-block');
     jQuery('input[type=radio]').change(function() {
       jQuery('.heatmap').remove();
-      jQuery('#blue,#green,#orange,#red,#stats,#black').html('--');
+      jQuery('#blue,#green,#orange,#red,#stats,#purple,#black').html('--');
       loadHeatMap(view_campaign_id);
     });
 });
@@ -27,12 +27,13 @@ function loadHeatMap(id) {
                 var step = Math.ceil(uniquelinkclicks / countlinks);
             }
             if(step < 1) step = 1;
-            jQuery('#blue,#green,#orange,#red,#stats,#black').html('--');
+            jQuery('#blue,#green,#orange,#red,#stats,#purple,#black').html('--');
             jQuery('#stats').html(uniquelinkclicks+'/'+linkclicks);
             jQuery('#blue').html('>= '+(step * 3));
             jQuery('#green').html((step * 2)+' - '+((step * 3)-1));
             jQuery('#orange').html(step+' - '+((step * 2)-1));
-            jQuery('#red').html('1 - '+step);
+            jQuery('#red').html((Math.ceil(step/2)+1)+' - '+(step - 1));
+            jQuery('#purple').html('1 - '+Math.ceil(step/2));
             jQuery('#black').html('0');
 
             if(jQuery('input[name=clicks]:checked').val() == 'clicks')  {
@@ -40,7 +41,8 @@ function loadHeatMap(id) {
                     if(data.linkclicks >= (step * 3)) generateZone(data, '#2196f396');
                     else if(data.linkclicks >= (step * 2)) generateZone(data, '#00800085');
                     else if(data.linkclicks >= step) generateZone(data, '#ffa50096');
-                    else if(data.linkclicks > 0)  generateZone(data, '#ff000057');
+                    else if(data.linkclicks >= (Math.ceil(step/2)+1)) generateZone(data, '#ff000057');
+                    else if(data.linkclicks > 0) generateZone(data, '#240365bd');
                     else generateZone(data, '#00000057');
                 });
             } else {
@@ -48,7 +50,8 @@ function loadHeatMap(id) {
                     if(data.uniquelinkclicks >= (step * 3)) generateZone(data, '#2196f396');
                     else if(data.uniquelinkclicks >= (step * 2)) generateZone(data, '#00800085');
                     else if(data.uniquelinkclicks >= step) generateZone(data, '#ffa50096');
-                    else if(data.uniquelinkclicks > 0)  generateZone(data, '#ff000057');
+                    else if(data.uniquelinkclicks >= (Math.ceil(step/2)+1)) generateZone(data, '#ff000057');
+                    else if(data.uniquelinkclicks > 0) generateZone(data, '#240365bd');
                     else generateZone(data, '#00000057');
                 });
             }

@@ -9,15 +9,17 @@
 #green,
 #orange,
 #red,
+#purple,
 #black {
     color: white;
     padding: 10px;
     background-color: black;
 }
-#blue { background-color: blue; }
+#blue { background-color: #2196f3; }
 #green { background-color: green; }
 #orange { background-color: orange; }
 #red { background-color: red; }
+#purple { background-color: purple; }
 
 .heatmap {
     text-shadow: 0 0 3px #000;

@@ -24,6 +24,7 @@ ob_start(); ?>
   <div id='green' title='Por encima de la media x2'>--</div>
   <div id='orange' title='Por encima de la media'>--</div>
   <div id='red' title='Por debajo de la media'>--</div>
+  <div id='purple' title='Por debajo de la mitad de la media'>--</div>
   <div id='black' title='0 clicks'>--</div>
 </div><?php 
 if(strpos($campaign['text'], "</body>") > 0) echo str_replace("</body>", ob_get_clean()."</body>", $campaign['text']);
